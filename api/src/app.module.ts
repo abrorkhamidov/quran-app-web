@@ -4,8 +4,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, BookmarkModule, FavoritesModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, BookmarkModule, FavoritesModule, SessionsModule],
 })
 export class AppModule {}
