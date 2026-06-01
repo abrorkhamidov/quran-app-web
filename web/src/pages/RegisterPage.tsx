@@ -23,19 +23,41 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center p-4">
-      <form onSubmit={onSubmit} className="w-full max-w-sm bg-card-light dark:bg-card-dark rounded-2xl p-6 space-y-4">
-        <h1 className="text-xl font-semibold">Create account</h1>
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <input className="w-full rounded-lg border border-muted/30 bg-transparent px-3 py-2"
-          placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input className="w-full rounded-lg border border-muted/30 bg-transparent px-3 py-2"
-          type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input className="w-full rounded-lg border border-muted/30 bg-transparent px-3 py-2"
-          type="password" placeholder="Password (min 8)" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button className="w-full rounded-lg bg-accent text-white py-2" type="submit">Create account</button>
-        <p className="text-sm text-muted">Have an account? <Link className="text-accent-soft" to="/login">Sign in</Link></p>
-      </form>
+    <div className="min-h-dvh grid place-items-center px-4 bg-surface-light dark:bg-surface-dark">
+      <div className="w-full max-w-sm rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-lift p-8">
+        <div className="text-center">
+          <div className="flex items-baseline justify-center gap-2">
+            <span className="font-display text-3xl font-semibold tracking-tight">Wird</span>
+            <span className="text-xs text-muted">وِرْد</span>
+          </div>
+          <p className="mt-1 text-sm text-muted">build a Qur'an habit</p>
+        </div>
+
+        <h1 className="mt-8 font-display text-xl">Create your account</h1>
+
+        <form onSubmit={onSubmit} className="mt-5 space-y-4">
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <input
+            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
+            placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required
+          />
+          <input
+            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
+            type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required
+          />
+          <input
+            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
+            type="password" placeholder="Password (min 8)" value={password} onChange={(e) => setPassword(e.target.value)} required
+          />
+          <button className="w-full rounded-xl bg-accent text-white py-2.5 font-medium hover:opacity-95 transition" type="submit">
+            Create account
+          </button>
+        </form>
+
+        <p className="mt-5 text-sm text-muted text-center">
+          Have an account? <Link className="text-accent-soft hover:underline" to="/login">Sign in</Link>
+        </p>
+      </div>
     </div>
   );
 }

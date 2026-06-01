@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useStatsSummary, localDate } from '../reading/useStatsSummary';
 import { useCalendar } from '../stats/useCalendar';
 import { isoAddDays } from '../stats/dateUtils';
@@ -16,43 +15,56 @@ export default function StatsPage() {
 
   const life = summary?.lifetime;
   const stats = [
-    { label: 'Total Hasanat', value: (life?.hasanat ?? 0).toLocaleString() },
-    { label: 'Verses', value: (life?.verses ?? 0).toLocaleString() },
-    { label: 'Pages', value: (life?.pages ?? 0).toLocaleString() },
-    { label: 'Time', value: fmtTime(life?.seconds ?? 0) },
+    { label: 'Total Hasanat', value: (life?.hasanat ?? 0).toLocaleString(), accent: true },
+    { label: 'Verses', value: (life?.verses ?? 0).toLocaleString(), accent: false },
+    { label: 'Pages', value: (life?.pages ?? 0).toLocaleString(), accent: false },
+    { label: 'Time', value: fmtTime(life?.seconds ?? 0), accent: false },
   ];
 
   return (
-    <div className="min-h-screen p-6 max-w-md mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <Link to="/" className="text-sm text-accent-soft">‹ Home</Link>
-        <h1 className="text-lg font-semibold">Your stats</h1>
-        <span className="w-10" />
-      </div>
+    <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-12 py-8">
+      <header className="mb-8">
+        <h1 className="font-display text-3xl sm:text-4xl tracking-tight">Your stats</h1>
+        <p className="mt-1 text-muted">Your lifetime journey with the Qur'an.</p>
+      </header>
 
-      <div className="flex justify-around rounded-2xl bg-card-light dark:bg-card-dark p-4 text-center">
-        <div><div className="text-xl font-bold">🔥 {summary?.streak.current ?? 0}</div><div className="text-xs text-muted">current</div></div>
-        <div><div className="text-xl font-bold">{summary?.streak.longest ?? 0}</div><div className="text-xs text-muted">longest</div></div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-xl bg-card-light dark:bg-card-dark p-4">
-            <div className="text-lg font-semibold text-accent-soft">{s.value}</div>
-            <div className="text-xs text-muted">{s.label}</div>
+          <div
+            key={s.label}
+            className="rounded-2xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-5 flex flex-col justify-between min-h-[108px]"
+          >
+            <span className="text-xs uppercase tracking-[0.14em] text-muted">{s.label}</span>
+            <span className={`font-display text-3xl mt-3 ${s.accent ? 'text-accent-soft' : ''}`}>{s.value}</span>
           </div>
         ))}
+
+        <div className="rounded-2xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-5 flex flex-col justify-between min-h-[108px]">
+          <span className="text-xs uppercase tracking-[0.14em] text-muted">Streak</span>
+          <div className="mt-3 flex items-end gap-4">
+            <span className="flex flex-col">
+              <span className="font-display text-3xl text-accent-soft leading-none">{summary?.streak.current ?? 0}</span>
+              <span className="text-xs text-muted mt-1">current</span>
+            </span>
+            <span className="flex flex-col">
+              <span className="font-display text-3xl leading-none">{summary?.streak.longest ?? 0}</span>
+              <span className="text-xs text-muted mt-1">longest</span>
+            </span>
+          </div>
+        </div>
       </div>
 
-      <section className="space-y-2">
-        <div className="text-xs uppercase text-muted">Activity (last 17 weeks)</div>
-        <Heatmap end={today} secondsByDate={secondsByDate} />
-      </section>
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted mb-5">Activity (last 17 weeks)</div>
+          <Heatmap end={today} secondsByDate={secondsByDate} />
+        </section>
 
-      <section className="space-y-2">
-        <div className="text-xs uppercase text-muted">Minutes per day (last 30 days)</div>
-        <MinutesChart end={today} secondsByDate={secondsByDate} />
-      </section>
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted mb-5">Minutes per day (last 30 days)</div>
+          <MinutesChart end={today} secondsByDate={secondsByDate} />
+        </section>
+      </div>
     </div>
   );
 }

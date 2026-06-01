@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useSettings } from '../settings/useSettings';
 import type { GoalLevel } from '../settings/SettingsContext';
 import { useReciters } from '../audio/useReciters';
@@ -14,46 +13,79 @@ export default function SettingsPage() {
   const { data: reciters } = useReciters();
 
   return (
-    <div className="min-h-screen p-6 max-w-md mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <Link to="/" className="text-sm text-accent-soft">‹ Home</Link>
-        <h1 className="text-lg font-semibold">Settings</h1>
-        <span className="w-10" />
-      </div>
+    <div className="mx-auto max-w-3xl px-5 sm:px-8 lg:px-12 py-8">
+      <header className="mb-8">
+        <h1 className="font-display text-3xl tracking-tight">Settings</h1>
+        <p className="mt-1 text-muted">Tune your daily practice.</p>
+      </header>
 
-      <section className="space-y-2">
-        <div className="text-xs uppercase text-muted">Daily goal</div>
-        <div className="grid grid-cols-3 gap-2">
-          {LEVELS.map((l) => (
-            <button key={l.key} onClick={() => setGoalLevel(l.key)}
-              className={'rounded-xl p-3 text-center ' + (goalLevel === l.key ? 'bg-accent text-white' : 'bg-card-light dark:bg-card-dark')}>
-              <div className="text-sm font-medium">{l.name}</div>
-              <div className="text-xs opacity-70">{l.secs}</div>
+      <div className="space-y-5">
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Daily goal</div>
+          <div className="grid grid-cols-3 gap-3">
+            {LEVELS.map((l) => {
+              const selected = goalLevel === l.key;
+              return (
+                <button
+                  key={l.key}
+                  onClick={() => setGoalLevel(l.key)}
+                  className={
+                    'rounded-2xl p-4 text-center border transition ' +
+                    (selected
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-surface-light dark:bg-surface-dark border-line-light dark:border-line-dark hover:border-accent-soft')
+                  }
+                >
+                  <div className="text-sm font-medium">{l.name}</div>
+                  <div className={'text-xs mt-0.5 ' + (selected ? 'opacity-80' : 'text-muted')}>{l.secs}</div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Reciter</div>
+          <select
+            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
+            value={reciterId}
+            onChange={(e) => setReciterId(Number(e.target.value))}
+          >
+            {reciters?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+          </select>
+        </section>
+
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7 flex items-center justify-between">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted">Theme</div>
+          <button
+            onClick={toggleTheme}
+            className="rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm hover:border-accent-soft transition"
+          >
+            {theme === 'light' ? '☾ Dark' : '☀ Light'}
+          </button>
+        </section>
+
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7 flex items-center justify-between">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted">Arabic font size</div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setFontScale(fontScale - 0.1)}
+              className="h-9 w-9 grid place-items-center rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-muted hover:border-accent-soft transition"
+              aria-label="Decrease font size"
+            >
+              A−
             </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-2">
-        <div className="text-xs uppercase text-muted">Reciter</div>
-        <select className="w-full rounded-lg bg-card-light dark:bg-card-dark p-3" value={reciterId} onChange={(e) => setReciterId(Number(e.target.value))}>
-          {reciters?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-        </select>
-      </section>
-
-      <section className="flex items-center justify-between">
-        <div className="text-xs uppercase text-muted">Theme</div>
-        <button onClick={toggleTheme} className="rounded-lg bg-card-light dark:bg-card-dark px-4 py-2 text-sm">{theme === 'light' ? '☾ Dark' : '☀ Light'}</button>
-      </section>
-
-      <section className="flex items-center justify-between">
-        <div className="text-xs uppercase text-muted">Arabic font size</div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setFontScale(fontScale - 0.1)} className="text-muted">A−</button>
-          <span className="text-sm w-10 text-center">{Math.round(fontScale * 100)}%</span>
-          <button onClick={() => setFontScale(fontScale + 0.1)} className="text-lg">A+</button>
-        </div>
-      </section>
+            <span className="font-display text-lg w-14 text-center">{Math.round(fontScale * 100)}%</span>
+            <button
+              onClick={() => setFontScale(fontScale + 0.1)}
+              className="h-9 w-9 grid place-items-center rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-lg hover:border-accent-soft transition"
+              aria-label="Increase font size"
+            >
+              A+
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
