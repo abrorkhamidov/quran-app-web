@@ -23,6 +23,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [highlighted, setHighlighted] = useState<HighlightedWord | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playingSurah, setPlayingSurah] = useState<number | null>(null);
+  const playingSurahRef = useRef<number | null>(null);
+  const playFromRef = useRef<((surah: number, ayah: number) => Promise<void>) | undefined>(undefined);
 
   if (!audioRef.current && typeof Audio !== 'undefined') audioRef.current = new Audio();
 
@@ -51,7 +53,16 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
     audio.addEventListener('timeupdate', onTimeUpdate);
-    const onEnd = () => { setIsPlaying(false); setHighlighted(null); };
+    const onEnd = () => {
+      const cur = playingSurahRef.current;
+      if (cur != null && cur < 114) {
+        // continuous recitation: roll into the next surah when the chapter audio ends
+        void playFromRef.current?.(cur + 1, 1);
+      } else {
+        setIsPlaying(false);
+        setHighlighted(null);
+      }
+    };
     audio.addEventListener('ended', onEnd);
     return () => { audio.removeEventListener('timeupdate', onTimeUpdate); audio.removeEventListener('ended', onEnd); };
   }, [onTimeUpdate]);
@@ -71,9 +82,13 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     audio.currentTime = v ? v.from / 1000 : 0;
     audio.playbackRate = playbackSpeed;
     setPlayingSurah(surah);
+    playingSurahRef.current = surah;
     await audio.play();
     setIsPlaying(true);
   }, [reciterId, playbackSpeed, playingSurah]);
+
+  // keep a ref to the latest playFrom so the 'ended' handler can auto-advance
+  useEffect(() => { playFromRef.current = playFrom; }, [playFrom]);
 
   const toggle = useCallback(() => {
     const audio = audioRef.current;
