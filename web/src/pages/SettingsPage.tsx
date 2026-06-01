@@ -9,8 +9,13 @@ const LEVELS: { key: GoalLevel; name: string; secs: string }[] = [
 ];
 
 export default function SettingsPage() {
-  const { goalLevel, setGoalLevel, reciterId, setReciterId, theme, toggleTheme, fontScale, setFontScale } = useSettings();
+  const { goalLevel, setGoalLevel, reciterId, setReciterId, theme, toggleTheme, fontScale, setFontScale, readingStyle, setReadingStyle } = useSettings();
   const { data: reciters } = useReciters();
+
+  const styles: { key: 'mushaf' | 'tajweed'; name: string; blurb: string }[] = [
+    { key: 'mushaf', name: 'Mushaf', blurb: 'Page-faithful QCF script' },
+    { key: 'tajweed', name: 'Tajwīd', blurb: 'Colour-coded rules' },
+  ];
 
   return (
     <div className="mx-auto max-w-3xl px-5 sm:px-8 lg:px-12 py-8">
@@ -38,6 +43,30 @@ export default function SettingsPage() {
                 >
                   <div className="text-sm font-medium">{l.name}</div>
                   <div className={'text-xs mt-0.5 ' + (selected ? 'opacity-80' : 'text-muted')}>{l.secs}</div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Reading style</div>
+          <div className="grid grid-cols-2 gap-3">
+            {styles.map((s) => {
+              const selected = readingStyle === s.key;
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setReadingStyle(s.key)}
+                  className={
+                    'rounded-2xl p-4 text-center border transition ' +
+                    (selected
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-surface-light dark:bg-surface-dark border-line-light dark:border-line-dark hover:border-accent-soft')
+                  }
+                >
+                  <div className="text-sm font-medium">{s.name}</div>
+                  <div className={'text-xs mt-0.5 ' + (selected ? 'opacity-80' : 'text-muted')}>{s.blurb}</div>
                 </button>
               );
             })}

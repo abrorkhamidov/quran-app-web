@@ -7,6 +7,7 @@ export default {
       fontFamily: {
         sans: ['"Hanken Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['Spectral', 'ui-serif', 'Georgia', 'serif'],
+        quran: ['"Amiri Quran"', 'Scheherazade New', 'serif'],
       },
       colors: {
         // Quiet Slate — muted greys, soft indigo accent (elevated for desktop depth)

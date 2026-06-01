@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MushafPage } from '../quran/MushafPage';
+import { TajweedPage } from '../quran/TajweedPage';
 import { useSaveBookmark } from '../reading/useBookmark';
+import { useSettings } from '../settings/useSettings';
 import { FontSizeControl } from '../components/FontSizeControl';
 import { AudioProvider } from '../audio/AudioContext';
 import { AudioBar } from '../audio/AudioBar';
@@ -12,6 +14,7 @@ import { ReadingStatsBar } from '../reading/ReadingStatsBar';
 function ReadPageInner({ n }: { n: number }) {
   const navigate = useNavigate();
   const saveBookmark = useSaveBookmark();
+  const { readingStyle } = useSettings();
   const { data } = usePageData(n);
   const [firstSurahAyah, setFirstSurahAyah] = useState<{ surah: number; ayah: number } | null>(null);
 
@@ -45,7 +48,7 @@ function ReadPageInner({ n }: { n: number }) {
       {/* the mushaf page, presented as a sheet */}
       <div className="flex-1 px-4 py-8">
         <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-line-light dark:border-line-dark bg-card-light dark:bg-card-dark shadow-lift">
-          <MushafPage page={n} />
+          {readingStyle === 'tajweed' ? <TajweedPage page={n} /> : <MushafPage page={n} />}
         </div>
       </div>
 

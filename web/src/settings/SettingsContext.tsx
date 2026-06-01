@@ -5,6 +5,7 @@ import { useAuth } from '../auth/useAuth';
 
 type Theme = 'light' | 'dark';
 export type GoalLevel = 'egg' | 'steady' | 'beast';
+export type ReadingStyle = 'mushaf' | 'tajweed';
 export const GOAL_SECONDS: Record<GoalLevel, number> = { egg: 120, steady: 600, beast: 1800 };
 
 type SettingsValue = {
@@ -18,6 +19,8 @@ type SettingsValue = {
   setPlaybackSpeed: (n: number) => void;
   goalLevel: GoalLevel;
   setGoalLevel: (l: GoalLevel) => void;
+  readingStyle: ReadingStyle;
+  setReadingStyle: (s: ReadingStyle) => void;
   onboarded: boolean;
   completeOnboarding: (l: GoalLevel) => void;
   settingsLoaded: boolean;
@@ -36,6 +39,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [reciterId, setReciterIdState] = useState<number>(() => Number(localStorage.getItem('reciterId')) || 7);
   const [playbackSpeed, setPlaybackSpeedState] = useState<number>(() => Number(localStorage.getItem('playbackSpeed')) || 1);
   const [goalLevel, setGoalLevelState] = useState<GoalLevel>('egg');
+  const [readingStyle, setReadingStyleState] = useState<ReadingStyle>(() => (localStorage.getItem('readingStyle') as ReadingStyle) || 'mushaf');
   const [onboarded, setOnboardedState] = useState(false);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const hydrated = useRef(false);
@@ -47,6 +51,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => { localStorage.setItem('fontScale', String(fontScale)); }, [fontScale]);
   useEffect(() => { localStorage.setItem('reciterId', String(reciterId)); }, [reciterId]);
   useEffect(() => { localStorage.setItem('playbackSpeed', String(playbackSpeed)); }, [playbackSpeed]);
+  useEffect(() => { localStorage.setItem('readingStyle', readingStyle); }, [readingStyle]);
 
   // hydrate from server on login; reset on logout
   useEffect(() => {
@@ -58,6 +63,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setFontScaleState(data.fontScale);
       setReciterIdState(data.preferredReciterId);
       setGoalLevelState(data.goalLevel);
+      if (data.readingStyle) setReadingStyleState(data.readingStyle);
       setOnboardedState(data.onboarded);
       hydrated.current = true;
       setSettingsLoaded(true);
@@ -75,10 +81,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   function setReciterId(id: number) { setReciterIdState(id); patch({ preferredReciterId: id }); }
   function setPlaybackSpeed(n: number) { setPlaybackSpeedState(SPEEDS.includes(n) ? n : 1); } // local only
   function setGoalLevel(l: GoalLevel) { setGoalLevelState(l); patch({ goalLevel: l }); }
+  function setReadingStyle(s: ReadingStyle) { setReadingStyleState(s); patch({ readingStyle: s }); }
   function completeOnboarding(l: GoalLevel) { setGoalLevelState(l); setOnboardedState(true); patch({ goalLevel: l, onboarded: true }); }
 
   return (
-    <SettingsContext.Provider value={{ theme, toggleTheme, fontScale, setFontScale, reciterId, setReciterId, playbackSpeed, setPlaybackSpeed, goalLevel, setGoalLevel, onboarded, completeOnboarding, settingsLoaded }}>
+    <SettingsContext.Provider value={{ theme, toggleTheme, fontScale, setFontScale, reciterId, setReciterId, playbackSpeed, setPlaybackSpeed, goalLevel, setGoalLevel, readingStyle, setReadingStyle, onboarded, completeOnboarding, settingsLoaded }}>
       {children}
     </SettingsContext.Provider>
   );
