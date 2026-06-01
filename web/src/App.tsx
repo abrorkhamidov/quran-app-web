@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
+import { SettingsProvider } from './settings/SettingsContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -11,7 +12,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <SettingsProvider>
+          <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route
@@ -38,7 +40,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-        </Routes>
+          </Routes>
+        </SettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   );
