@@ -1,0 +1,11 @@
+{
+  "name": "quran-app-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:scripts": "vitest run scripts/test"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}
