@@ -14,7 +14,13 @@ describe('Auth (e2e)', () => {
       imports: [AppModule],
     }).compile();
     app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     prisma = app.get(PrismaService);
     await app.init();
   });
@@ -53,7 +59,7 @@ describe('Auth (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ email, password: 'password123' })
-      .expect(201);
+      .expect(200);
     expect(res.body.accessToken).toBeDefined();
   });
 
@@ -86,7 +92,7 @@ describe('Auth (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post('/auth/refresh')
       .send({ refreshToken: login.body.refreshToken })
-      .expect(201);
+      .expect(200);
     expect(res.body.accessToken).toBeDefined();
   });
 });

@@ -67,7 +67,9 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
-    const tokens = await this.issueTokens(payload.sub, payload.email);
+    const user = await this.users.findById(payload.sub);
+    if (!user) throw new UnauthorizedException('User not found');
+    const tokens = await this.issueTokens(user.id, user.email);
     return tokens;
   }
 }
