@@ -44,4 +44,19 @@ export class StatsService {
     const byDate = new Map(rows.map((r) => [r.date, r]));
     return dates.map((dt) => ({ date: dt, goalMet: byDate.get(dt)?.goalMet ?? false, secondsRead: byDate.get(dt)?.secondsRead ?? 0 }));
   }
+
+  async calendar(userId: string, from: string, to: string) {
+    const rows = await this.prisma.dailyProgress.findMany({
+      where: { userId, date: { gte: from, lte: to } },
+      orderBy: { date: 'asc' },
+    });
+    return rows.map((r) => ({
+      date: r.date,
+      secondsRead: r.secondsRead,
+      versesRead: r.versesRead,
+      pagesRead: r.pagesRead,
+      hasanat: r.hasanat,
+      goalMet: r.goalMet,
+    }));
+  }
 }

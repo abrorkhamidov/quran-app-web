@@ -8,6 +8,11 @@ class SummaryQuery {
   @Matches(/^\d{4}-\d{2}-\d{2}$/) date: string;
 }
 
+class CalendarQuery {
+  @Matches(/^\d{4}-\d{2}-\d{2}$/) from: string;
+  @Matches(/^\d{4}-\d{2}-\d{2}$/) to: string;
+}
+
 @UseGuards(JwtAuthGuard)
 @Controller('stats')
 export class StatsController {
@@ -21,5 +26,10 @@ export class StatsController {
   @Get('week')
   week(@CurrentUser() user: { id: string }, @Query() q: SummaryQuery) {
     return this.stats.week(user.id, q.date);
+  }
+
+  @Get('calendar')
+  calendar(@CurrentUser() user: { id: string }, @Query() q: CalendarQuery) {
+    return this.stats.calendar(user.id, q.from, q.to);
   }
 }
