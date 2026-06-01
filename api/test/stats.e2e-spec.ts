@@ -56,4 +56,17 @@ describe('Stats (e2e)', () => {
     const res = await request(app.getHttpServer()).get('/stats/summary?date=2026-06-10').set('Authorization', `Bearer ${token}`).expect(200);
     expect(res.body.streak.current).toBe(0); // last active 06-01, today 06-10 → broken
   });
+
+  it('returns 7 days ending at the given date, newest last', async () => {
+    const res = await request(app.getHttpServer()).get('/stats/week?date=2026-06-01').set('Authorization', `Bearer ${token}`).expect(200);
+    expect(res.body).toHaveLength(7);
+    expect(res.body[6].date).toBe('2026-06-01');
+    expect(res.body[0].date).toBe('2026-05-26');
+    expect(res.body[6].goalMet).toBe(true);   // the seeded goal-met day
+    expect(res.body[5].goalMet).toBe(false);  // 2026-05-31 had no reading
+  });
+
+  it('week requires auth', async () => {
+    await request(app.getHttpServer()).get('/stats/week?date=2026-06-01').expect(401);
+  });
 });

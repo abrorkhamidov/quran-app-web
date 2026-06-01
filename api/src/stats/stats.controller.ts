@@ -17,4 +17,9 @@ export class StatsController {
   summary(@CurrentUser() user: { id: string }, @Query() q: SummaryQuery) {
     return this.stats.summary(user.id, q.date);
   }
+
+  @Get('week')
+  week(@CurrentUser() user: { id: string }, @Query() q: SummaryQuery) {
+    return this.stats.week(user.id, q.date);
+  }
 }

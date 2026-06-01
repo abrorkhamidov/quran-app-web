@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { DEFAULT_GOAL_SECONDS } from '../sessions/sessions.service';
-import { effectiveCurrent } from '../sessions/streak';
+import { effectiveCurrent, isoMinus1 } from '../sessions/streak';
 
 @Injectable()
 export class StatsService {
@@ -32,5 +32,15 @@ export class StatsService {
       },
       streak: { current: effectiveCurrent(streak, date), longest: streak.longestStreak },
     };
+  }
+
+  async week(userId: string, date: string) {
+    // build the 7 dates ending at `date`, oldest first
+    const dates: string[] = [];
+    let d = date;
+    for (let i = 0; i < 7; i++) { dates.unshift(d); d = isoMinus1(d); }
+    const rows = await this.prisma.dailyProgress.findMany({ where: { userId, date: { in: dates } } });
+    const byDate = new Map(rows.map((r) => [r.date, r]));
+    return dates.map((dt) => ({ date: dt, goalMet: byDate.get(dt)?.goalMet ?? false, secondsRead: byDate.get(dt)?.secondsRead ?? 0 }));
   }
 }
