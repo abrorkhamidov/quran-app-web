@@ -6,3 +6,6 @@ dist/
 
 # Playwright MCP verification artifacts
 .playwright-mcp/
+
+# Build-time font-conversion venv
+.venv-fonts/
