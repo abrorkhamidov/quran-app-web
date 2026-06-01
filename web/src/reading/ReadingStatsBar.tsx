@@ -18,12 +18,20 @@ export function ReadingStatsBar() {
 
   const today = data?.today;
   const seconds = (today?.secondsRead ?? 0) + extra;
+  const cells = [
+    { label: 'Hasanat', value: (today?.hasanat ?? 0).toLocaleString(), accent: true },
+    { label: 'Verses', value: String(today?.versesRead ?? 0), accent: false },
+    { label: 'Time', value: fmt(seconds), accent: false },
+    { label: 'Pages', value: String(today?.pagesRead ?? 0), accent: false },
+  ];
   return (
-    <div className="flex justify-around text-center px-4 py-2 text-xs text-muted border-t border-muted/20">
-      <div><div className="text-accent-soft font-semibold">{(today?.hasanat ?? 0).toLocaleString()}</div>Hasanat</div>
-      <div><div className="text-ink dark:text-ink-dark font-semibold">{today?.versesRead ?? 0}</div>Verses</div>
-      <div><div className="text-ink dark:text-ink-dark font-semibold">{fmt(seconds)}</div>Time</div>
-      <div><div className="text-ink dark:text-ink-dark font-semibold">{today?.pagesRead ?? 0}</div>Pages</div>
+    <div className="flex justify-around border-b border-line-light dark:border-line-dark px-4 py-2.5 text-center">
+      {cells.map((c) => (
+        <div key={c.label} className="leading-tight">
+          <div className={`font-display text-base ${c.accent ? 'text-accent-soft' : 'text-ink dark:text-ink-dark'}`}>{c.value}</div>
+          <div className="text-[10px] uppercase tracking-[0.12em] text-muted mt-0.5">{c.label}</div>
+        </div>
+      ))}
     </div>
   );
 }

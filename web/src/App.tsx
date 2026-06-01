@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { SettingsProvider } from './settings/SettingsContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
+import { AppShell } from './layout/AppShell';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -17,56 +18,29 @@ export default function App() {
       <AuthProvider>
         <SettingsProvider>
           <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route
-            path="/onboarding"
-            element={
-              <ProtectedRoute requireOnboarded={false}>
-                <OnboardingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/read/page/:page"
-            element={
-              <ProtectedRoute>
-                <ReadPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/favorites"
-            element={
-              <ProtectedRoute>
-                <FavoritesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/stats"
-            element={
-              <ProtectedRoute>
-                <StatsPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute requireOnboarded={false}>
+                  <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppShell />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/read/page/:page" element={<ReadPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
           </Routes>
         </SettingsProvider>
       </AuthProvider>

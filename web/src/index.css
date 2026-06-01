@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light dark; }
-body { @apply bg-surface-light text-ink antialiased; }
-.dark body { @apply bg-surface-dark text-ink-dark; }
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-surface-light text-ink antialiased font-sans;
+  /* a barely-there atmosphere so flat slate doesn't feel dead */
+  background-image: radial-gradient(120% 80% at 50% -10%, rgba(125, 138, 163, 0.07), transparent 60%);
+  background-attachment: fixed;
+}
+
+.dark body {
+  @apply bg-surface-dark text-ink-dark;
+  background-image: radial-gradient(120% 80% at 50% -10%, rgba(125, 138, 163, 0.1), transparent 60%);
+}
+
+::selection {
+  background: rgba(125, 138, 163, 0.28);
+}
+
+/* tighter, calmer scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 145, 155, 0.4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(139, 145, 155, 0.35);
+  border-radius: 9999px;
+}
+
+/* display serif for headings + key numbers */
+.font-display {
+  font-family: Spectral, ui-serif, Georgia, serif;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+}
