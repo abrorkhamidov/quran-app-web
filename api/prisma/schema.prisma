@@ -43,3 +43,40 @@ model Favorite {
   @@unique([userId, surah, ayah])
   @@index([userId])
 }
+
+model ReadingSession {
+  id              String   @id @default(uuid())
+  userId          String
+  date            String   // client local date YYYY-MM-DD
+  durationSeconds Int
+  versesCount     Int
+  pagesCount      Int
+  hasanat         Int
+  startSurah      Int
+  startAyah       Int
+  endSurah        Int
+  endAyah         Int
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+}
+
+model DailyProgress {
+  userId      String
+  date        String  // YYYY-MM-DD (client local)
+  secondsRead Int     @default(0)
+  versesRead  Int     @default(0)
+  pagesRead   Int     @default(0)
+  hasanat     Int     @default(0)
+  goalMet     Boolean @default(false)
+
+  @@id([userId, date])
+  @@index([userId])
+}
+
+model Streak {
+  userId         String  @id
+  currentStreak  Int     @default(0)
+  longestStreak  Int     @default(0)
+  lastActiveDate String? // YYYY-MM-DD
+}
