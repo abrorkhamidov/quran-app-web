@@ -7,12 +7,16 @@ import { FontSizeControl } from '../components/FontSizeControl';
 import { AudioProvider } from '../audio/AudioContext';
 import { AudioBar } from '../audio/AudioBar';
 import { usePageData } from '../quran/usePageData';
+import { useReadingTracker } from '../reading/useReadingTracker';
+import { ReadingStatsBar } from '../reading/ReadingStatsBar';
 
 function ReadPageInner({ n }: { n: number }) {
   const navigate = useNavigate();
   const saveBookmark = useSaveBookmark();
   const { data } = usePageData(n);
   const [firstSurahAyah, setFirstSurahAyah] = useState<{ surah: number; ayah: number } | null>(null);
+
+  useReadingTracker(n);
 
   useEffect(() => { saveBookmark.mutate(n); /* eslint-disable-next-line */ }, [n]);
   useEffect(() => {
@@ -35,6 +39,7 @@ function ReadPageInner({ n }: { n: number }) {
         <button onClick={() => navigate(`/read/page/${n + 1}`)} disabled={n >= 604} className="disabled:opacity-30">Next ›</button>
       </div>
       <div className="flex-1"><MushafPage page={n} /></div>
+      <ReadingStatsBar />
       <AudioBar firstSurahAyah={firstSurahAyah} />
     </div>
   );
