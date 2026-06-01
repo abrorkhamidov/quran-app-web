@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { useStatsSummary } from '../reading/useStatsSummary';
 import { useWeek } from '../dashboard/useWeek';
@@ -18,6 +19,7 @@ export default function DashboardPage() {
         <span className="text-muted">Assalamu alaikum, {user?.name}</span>
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          <Link to="/settings" className="text-sm text-muted" aria-label="Settings">⚙</Link>
           <button className="text-sm text-accent-soft" onClick={logout}>Log out</button>
         </div>
       </div>

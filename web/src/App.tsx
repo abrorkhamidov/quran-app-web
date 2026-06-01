@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import ReadPage from './pages/ReadPage';
 import FavoritesPage from './pages/FavoritesPage';
 import OnboardingPage from './pages/OnboardingPage';
+import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
   return (
@@ -38,6 +39,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ReadPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>
             }
           />
