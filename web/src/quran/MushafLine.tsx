@@ -1,13 +1,18 @@
 import type { MushafLine as Line } from './types';
+import type { HighlightedWord } from '../audio/types';
 import { MushafWord } from './MushafWord';
 
 export function MushafLine({
   line,
+  positions,
   selected,
+  highlighted,
   onSelect,
 }: {
   line: Line;
+  positions: number[]; // position per word in this line, aligned by index
   selected: { surah: number; ayah: number } | null;
+  highlighted: HighlightedWord | null;
   onSelect: (a: { surah: number; ayah: number }) => void;
 }) {
   return (
@@ -16,7 +21,14 @@ export function MushafLine({
         <MushafWord
           key={i}
           word={w}
+          position={positions[i]}
           selected={!!selected && selected.surah === w.surah && selected.ayah === w.ayah}
+          isPlaying={
+            !!highlighted &&
+            highlighted.surah === w.surah &&
+            highlighted.ayah === w.ayah &&
+            highlighted.position === positions[i]
+          }
           onSelect={onSelect}
         />
       ))}
