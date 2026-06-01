@@ -9,6 +9,7 @@ import ReadPage from './pages/ReadPage';
 import FavoritesPage from './pages/FavoritesPage';
 import OnboardingPage from './pages/OnboardingPage';
 import SettingsPage from './pages/SettingsPage';
+import StatsPage from './pages/StatsPage';
 
 export default function App() {
   return (
@@ -55,6 +56,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <FavoritesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/stats"
+            element={
+              <ProtectedRoute>
+                <StatsPage />
               </ProtectedRoute>
             }
           />

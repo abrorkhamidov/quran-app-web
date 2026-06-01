@@ -9,7 +9,10 @@ export function ContinueCard() {
       <Link to={`/read/page/${resumePage}`} className="block rounded-lg bg-accent text-white py-3 font-medium">
         {bookmark ? `Continue · page ${resumePage}` : 'Start reading'}
       </Link>
-      <Link to="/favorites" className="text-sm text-accent-soft">View favorites</Link>
+      <div className="flex justify-center gap-4">
+        <Link to="/favorites" className="text-sm text-accent-soft">View favorites</Link>
+        <Link to="/stats" className="text-sm text-accent-soft">View stats</Link>
+      </div>
     </div>
   );
 }
