@@ -6,8 +6,9 @@ import { BookmarkModule } from './bookmark/bookmark.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { StatsModule } from './stats/stats.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, BookmarkModule, FavoritesModule, SessionsModule, StatsModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, BookmarkModule, FavoritesModule, SessionsModule, StatsModule, SettingsModule],
 })
 export class AppModule {}

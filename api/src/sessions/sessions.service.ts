@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RecordSessionDto } from './dto/record-session.dto';
 import { nextStreak, StreakState } from './streak';
-
-export const DEFAULT_GOAL_SECONDS = 120;
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class SessionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private settings: SettingsService) {}
 
   async record(userId: string, dto: RecordSessionDto) {
     const pages = [...new Set(dto.pages)].filter((p) => p >= 1 && p <= 604);
@@ -47,7 +46,8 @@ export class SessionsService {
       },
     });
 
-    const goalMet = dp.secondsRead >= DEFAULT_GOAL_SECONDS;
+    const goalTargetSeconds = await this.settings.getGoalSeconds(userId);
+    const goalMet = dp.secondsRead >= goalTargetSeconds;
     let streakState: StreakState =
       (await this.prisma.streak.findUnique({ where: { userId } })) ?? { currentStreak: 0, longestStreak: 0, lastActiveDate: null };
 
@@ -70,7 +70,7 @@ export class SessionsService {
         goalMet,
       },
       streak: { current: streakState.currentStreak, longest: streakState.longestStreak },
-      goalTargetSeconds: DEFAULT_GOAL_SECONDS,
+      goalTargetSeconds,
     };
   }
 }

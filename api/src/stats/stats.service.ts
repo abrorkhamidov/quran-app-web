@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { DEFAULT_GOAL_SECONDS } from '../sessions/sessions.service';
+import { SettingsService } from '../settings/settings.service';
 import { effectiveCurrent, isoMinus1 } from '../sessions/streak';
 
 @Injectable()
 export class StatsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private settings: SettingsService) {}
 
   async summary(userId: string, date: string) {
     const today = await this.prisma.dailyProgress.findUnique({ where: { userId_date: { userId, date } } });
@@ -14,9 +14,10 @@ export class StatsService {
       _sum: { secondsRead: true, versesRead: true, pagesRead: true, hasanat: true },
     });
     const streak = (await this.prisma.streak.findUnique({ where: { userId } })) ?? { currentStreak: 0, longestStreak: 0, lastActiveDate: null };
+    const goalTargetSeconds = await this.settings.getGoalSeconds(userId);
 
     return {
-      goalTargetSeconds: DEFAULT_GOAL_SECONDS,
+      goalTargetSeconds,
       today: {
         secondsRead: today?.secondsRead ?? 0,
         versesRead: today?.versesRead ?? 0,
