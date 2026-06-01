@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light dark; }
+body { @apply bg-surface-light text-ink antialiased; }
+.dark body { @apply bg-surface-dark text-ink-dark; }
