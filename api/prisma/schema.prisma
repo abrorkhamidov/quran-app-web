@@ -80,3 +80,14 @@ model Streak {
   longestStreak  Int     @default(0)
   lastActiveDate String? // YYYY-MM-DD
 }
+
+model UserSettings {
+  userId            String   @id
+  onboarded         Boolean  @default(false)
+  goalLevel         String   @default("egg")   // egg | steady | beast
+  goalTargetSeconds Int      @default(120)
+  preferredReciterId Int     @default(7)
+  theme             String   @default("light") // light | dark
+  fontScale         Float    @default(1)
+  updatedAt         DateTime @updatedAt
+}
