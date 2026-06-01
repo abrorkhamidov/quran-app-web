@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ReadPage from './pages/ReadPage';
 import FavoritesPage from './pages/FavoritesPage';
+import OnboardingPage from './pages/OnboardingPage';
 
 export default function App() {
   return (
@@ -16,6 +17,14 @@ export default function App() {
           <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute requireOnboarded={false}>
+                <OnboardingPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/"
             element={
