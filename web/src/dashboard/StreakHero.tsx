@@ -1,0 +1,24 @@
+import type { StatsSummary } from '../reading/useStatsSummary';
+
+function fmt(s: number) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+
+export function StreakHero({ summary }: { summary?: StatsSummary }) {
+  const streak = summary?.streak.current ?? 0;
+  const secs = summary?.today.secondsRead ?? 0;
+  const goal = summary?.goalTargetSeconds ?? 120;
+  const pct = Math.min(100, Math.round((secs / goal) * 100));
+  return (
+    <div className="rounded-2xl bg-card-light dark:bg-card-dark p-6 text-center">
+      <div className="text-4xl font-bold">🔥 {streak}</div>
+      <div className="text-muted text-sm">{streak === 1 ? 'day streak' : 'day streak'}</div>
+      <div className="mt-4 text-xs text-muted flex justify-between">
+        <span>Today's goal</span>
+        <span>{fmt(secs)} / {fmt(goal)}</span>
+      </div>
+      <div className="h-2 rounded-full bg-surface-light dark:bg-surface-dark mt-1 overflow-hidden">
+        <div className="h-2 rounded-full bg-accent-soft transition-all" style={{ width: `${pct}%` }} />
+      </div>
+      {summary?.today.goalMet && <div className="text-accent-soft text-xs mt-2">Goal complete ✓</div>}
+    </div>
+  );
+}
