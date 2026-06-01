@@ -9,7 +9,7 @@ export const DEFAULT_GOAL_SECONDS = GOAL_LEVELS.egg;
 export class SettingsService {
   constructor(private prisma: PrismaService) {}
 
-  private publicShape(s: { onboarded: boolean; goalLevel: string; goalTargetSeconds: number; preferredReciterId: number; theme: string; fontScale: number }) {
+  private publicShape(s: { onboarded: boolean; goalLevel: string; goalTargetSeconds: number; preferredReciterId: number; theme: string; fontScale: number; readingStyle: string }) {
     return {
       onboarded: s.onboarded,
       goalLevel: s.goalLevel,
@@ -17,6 +17,7 @@ export class SettingsService {
       preferredReciterId: s.preferredReciterId,
       theme: s.theme,
       fontScale: s.fontScale,
+      readingStyle: s.readingStyle,
     };
   }
 

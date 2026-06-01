@@ -89,5 +89,6 @@ model UserSettings {
   preferredReciterId Int     @default(7)
   theme             String   @default("light") // light | dark
   fontScale         Float    @default(1)
+  readingStyle      String   @default("mushaf") // mushaf | tajweed
   updatedAt         DateTime @updatedAt
 }
