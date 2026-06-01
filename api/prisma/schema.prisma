@@ -13,3 +13,14 @@ model User {
   name         String
   createdAt    DateTime @default(now())
 }
+
+model AyahRef {
+  surah       Int
+  ayah        Int
+  page        Int
+  juz         Int
+  letterCount Int
+
+  @@id([surah, ayah])
+  @@index([page])
+}
