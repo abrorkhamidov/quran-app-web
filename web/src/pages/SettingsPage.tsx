@@ -10,7 +10,7 @@ const LEVELS: { key: GoalLevel; name: string; secs: string }[] = [
 ];
 
 export default function SettingsPage() {
-  const { goalLevel, setGoalLevel, reciterId, setReciterId, theme, toggleTheme, fontScale, setFontScale, readingStyle, setReadingStyle } = useSettings();
+  const { goalLevel, setGoalLevel, goalType, setGoalType, goalTargetAyahs, setGoalTargetAyahs, reciterId, setReciterId, theme, toggleTheme, fontScale, setFontScale, readingStyle, setReadingStyle } = useSettings();
   const { data: reciters } = useReciters();
 
   // keep the selected reciter valid — a stored id missing from the list renders the <select> blank
@@ -35,26 +35,58 @@ export default function SettingsPage() {
       <div className="space-y-5">
         <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
           <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Daily goal</div>
-          <div className="grid grid-cols-3 gap-3">
-            {LEVELS.map((l) => {
-              const selected = goalLevel === l.key;
-              return (
-                <button
-                  key={l.key}
-                  onClick={() => setGoalLevel(l.key)}
-                  className={
-                    'rounded-2xl p-4 text-center border transition ' +
-                    (selected
-                      ? 'bg-accent text-white border-accent'
-                      : 'bg-surface-light dark:bg-surface-dark border-line-light dark:border-line-dark hover:border-accent-soft')
-                  }
-                >
-                  <div className="text-sm font-medium">{l.name}</div>
-                  <div className={'text-xs mt-0.5 ' + (selected ? 'opacity-80' : 'text-muted')}>{l.secs}</div>
-                </button>
-              );
-            })}
+          <div className="mb-4 inline-flex gap-1 rounded-2xl bg-surface-light dark:bg-surface-dark p-1">
+            {(['time', 'ayahs'] as const).map((gt) => (
+              <button
+                key={gt}
+                onClick={() => setGoalType(gt)}
+                className={'rounded-xl px-4 py-2 text-sm transition ' + (goalType === gt ? 'bg-accent text-white' : 'text-muted hover:text-ink dark:hover:text-ink-dark')}
+              >
+                {gt === 'time' ? 'Time' : 'Ayahs'}
+              </button>
+            ))}
           </div>
+
+          {goalType === 'time' ? (
+            <div className="grid grid-cols-3 gap-3">
+              {LEVELS.map((l) => {
+                const selected = goalLevel === l.key;
+                return (
+                  <button
+                    key={l.key}
+                    onClick={() => setGoalLevel(l.key)}
+                    className={
+                      'rounded-2xl p-4 text-center border transition ' +
+                      (selected
+                        ? 'bg-accent text-white border-accent'
+                        : 'bg-surface-light dark:bg-surface-dark border-line-light dark:border-line-dark hover:border-accent-soft')
+                    }
+                  >
+                    <div className="text-sm font-medium">{l.name}</div>
+                    <div className={'text-xs mt-0.5 ' + (selected ? 'opacity-80' : 'text-muted')}>{l.secs}</div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setGoalTargetAyahs(goalTargetAyahs - 1)}
+                className="h-9 w-9 grid place-items-center rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-muted hover:border-accent-soft transition"
+                aria-label="Fewer ayahs"
+              >
+                −
+              </button>
+              <span className="font-display text-lg w-24 text-center">{goalTargetAyahs} ayah{goalTargetAyahs === 1 ? '' : 's'}</span>
+              <button
+                onClick={() => setGoalTargetAyahs(goalTargetAyahs + 1)}
+                className="h-9 w-9 grid place-items-center rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-lg hover:border-accent-soft transition"
+                aria-label="More ayahs"
+              >
+                +
+              </button>
+            </div>
+          )}
         </section>
 
         <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">

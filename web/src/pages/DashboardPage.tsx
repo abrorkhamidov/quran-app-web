@@ -6,6 +6,7 @@ import { useBookmark } from '../reading/useBookmark';
 import { FlameIcon } from '../layout/icons';
 import { formatDuration } from '../lib/formatDuration';
 import { KhatmBar } from '../dashboard/KhatmBar';
+import { FocusCard } from '../dashboard/FocusCard';
 import { useSurahs, useJuzList } from '../quran/useQuranMeta';
 import { ayahsLeftInJuz, juzOf } from '../quran/quranIndex';
 
@@ -28,9 +29,12 @@ export default function DashboardPage() {
       : undefined;
 
   const t = summary?.today;
-  const goal = summary?.goalTargetSeconds ?? 120;
+  const goal = summary?.goal ?? { type: 'time' as const, target: 120 };
   const secs = t?.secondsRead ?? 0;
-  const pct = Math.min(100, Math.round((secs / goal) * 100));
+  const goalCurrent = goal.type === 'ayahs' ? (t?.versesRead ?? 0) : secs;
+  const pct = Math.min(100, Math.round((goalCurrent / goal.target) * 100));
+  const goalCurrentLabel = goal.type === 'ayahs' ? String(goalCurrent) : formatDuration(goalCurrent);
+  const goalTargetLabel = goal.type === 'ayahs' ? `${goal.target} ayahs` : formatDuration(goal.target);
   const resume = bookmark?.page ?? 1;
   const dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
 
@@ -60,8 +64,8 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="mt-5 flex items-end gap-3">
-            <span className="font-display text-5xl leading-none">{formatDuration(secs)}</span>
-            <span className="text-muted mb-1">/ {formatDuration(goal)}</span>
+            <span className="font-display text-5xl leading-none">{goalCurrentLabel}</span>
+            <span className="text-muted mb-1">/ {goalTargetLabel}</span>
             {t?.goalMet && <span className="mb-1 text-sm text-accent-soft">complete ✓</span>}
           </div>
           <div className="mt-4 h-2 rounded-full bg-surface-light dark:bg-surface-dark overflow-hidden">
@@ -125,6 +129,7 @@ export default function DashboardPage() {
         <section className="lg:col-span-12 rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
           <KhatmBar />
         </section>
+        <FocusCard />
       </div>
     </div>
   );

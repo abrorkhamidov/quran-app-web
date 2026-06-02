@@ -7,7 +7,7 @@ export function localDate(): string {
 }
 
 export type StatsSummary = {
-  goalTargetSeconds: number;
+  goal: { type: 'time' | 'ayahs'; target: number };
   today: { secondsRead: number; versesRead: number; pagesRead: number; hasanat: number; goalMet: boolean };
   lifetime: { seconds: number; verses: number; pages: number; hasanat: number };
   streak: { current: number; longest: number };

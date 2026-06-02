@@ -6,6 +6,8 @@ import { useAuth } from '../auth/useAuth';
 type Theme = 'light' | 'dark';
 export type GoalLevel = 'egg' | 'steady' | 'beast';
 export type ReadingStyle = 'mushaf' | 'tajweed' | 'ayah';
+export type GoalType = 'time' | 'ayahs';
+export type FocusType = 'none' | 'juz' | 'surah';
 export const GOAL_SECONDS: Record<GoalLevel, number> = { egg: 120, steady: 600, beast: 1800 };
 
 type SettingsValue = {
@@ -21,6 +23,13 @@ type SettingsValue = {
   setGoalLevel: (l: GoalLevel) => void;
   readingStyle: ReadingStyle;
   setReadingStyle: (s: ReadingStyle) => void;
+  goalType: GoalType;
+  setGoalType: (t: GoalType) => void;
+  goalTargetAyahs: number;
+  setGoalTargetAyahs: (n: number) => void;
+  focusType: FocusType;
+  focusId: number | null;
+  setFocus: (type: FocusType, id: number | null) => void;
   onboarded: boolean;
   completeOnboarding: (l: GoalLevel) => void;
   settingsLoaded: boolean;
@@ -40,6 +49,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [playbackSpeed, setPlaybackSpeedState] = useState<number>(() => Number(localStorage.getItem('playbackSpeed')) || 1);
   const [goalLevel, setGoalLevelState] = useState<GoalLevel>('egg');
   const [readingStyle, setReadingStyleState] = useState<ReadingStyle>(() => (localStorage.getItem('readingStyle') as ReadingStyle) || 'mushaf');
+  const [goalType, setGoalTypeState] = useState<GoalType>('time');
+  const [goalTargetAyahs, setGoalTargetAyahsState] = useState<number>(10);
+  const [focusType, setFocusTypeState] = useState<FocusType>('none');
+  const [focusId, setFocusIdState] = useState<number | null>(null);
   const [onboarded, setOnboardedState] = useState(false);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const hydrated = useRef(false);
@@ -64,6 +77,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setReciterIdState(data.preferredReciterId);
       setGoalLevelState(data.goalLevel);
       if (data.readingStyle) setReadingStyleState(data.readingStyle);
+      if (data.goalType) setGoalTypeState(data.goalType);
+      if (typeof data.goalTargetAyahs === 'number') setGoalTargetAyahsState(data.goalTargetAyahs);
+      if (data.focusType) setFocusTypeState(data.focusType);
+      setFocusIdState(data.focusId ?? null);
       setOnboardedState(data.onboarded);
       hydrated.current = true;
       setSettingsLoaded(true);
@@ -82,10 +99,17 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   function setPlaybackSpeed(n: number) { setPlaybackSpeedState(SPEEDS.includes(n) ? n : 1); } // local only
   function setGoalLevel(l: GoalLevel) { setGoalLevelState(l); patch({ goalLevel: l }); }
   function setReadingStyle(s: ReadingStyle) { setReadingStyleState(s); patch({ readingStyle: s }); }
+  function setGoalType(t: GoalType) { setGoalTypeState(t); patch({ goalType: t }); }
+  function setGoalTargetAyahs(n: number) { const v = Math.max(1, Math.round(n)); setGoalTargetAyahsState(v); patch({ goalTargetAyahs: v }); }
+  function setFocus(type: FocusType, id: number | null) {
+    setFocusTypeState(type);
+    setFocusIdState(type === 'none' ? null : id);
+    patch(type === 'none' ? { focusType: 'none' } : { focusType: type, focusId: id });
+  }
   function completeOnboarding(l: GoalLevel) { setGoalLevelState(l); setOnboardedState(true); patch({ goalLevel: l, onboarded: true }); }
 
   return (
-    <SettingsContext.Provider value={{ theme, toggleTheme, fontScale, setFontScale, reciterId, setReciterId, playbackSpeed, setPlaybackSpeed, goalLevel, setGoalLevel, readingStyle, setReadingStyle, onboarded, completeOnboarding, settingsLoaded }}>
+    <SettingsContext.Provider value={{ goalType, setGoalType, goalTargetAyahs, setGoalTargetAyahs, focusType, focusId, setFocus, theme, toggleTheme, fontScale, setFontScale, reciterId, setReciterId, playbackSpeed, setPlaybackSpeed, goalLevel, setGoalLevel, readingStyle, setReadingStyle, onboarded, completeOnboarding, settingsLoaded }}>
       {children}
     </SettingsContext.Provider>
   );
