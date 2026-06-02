@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSettings } from '../settings/useSettings';
 import type { GoalLevel } from '../settings/SettingsContext';
 import { useReciters } from '../audio/useReciters';
@@ -11,6 +12,12 @@ const LEVELS: { key: GoalLevel; name: string; secs: string }[] = [
 export default function SettingsPage() {
   const { goalLevel, setGoalLevel, reciterId, setReciterId, theme, toggleTheme, fontScale, setFontScale, readingStyle, setReadingStyle } = useSettings();
   const { data: reciters } = useReciters();
+
+  // keep the selected reciter valid — a stored id missing from the list renders the <select> blank
+  const validReciterId = reciters?.some((r) => r.id === reciterId) ? reciterId : reciters?.[0]?.id;
+  useEffect(() => {
+    if (reciters?.length && validReciterId != null && validReciterId !== reciterId) setReciterId(validReciterId);
+  }, [reciters, validReciterId, reciterId, setReciterId]);
 
   const styles: { key: 'mushaf' | 'tajweed'; name: string; blurb: string }[] = [
     { key: 'mushaf', name: 'Mushaf', blurb: 'Page-faithful QCF script' },
@@ -76,8 +83,8 @@ export default function SettingsPage() {
         <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
           <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Reciter</div>
           <select
-            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
-            value={reciterId}
+            className="w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-ink dark:text-ink-dark px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-soft/40"
+            value={validReciterId ?? reciterId}
             onChange={(e) => setReciterId(Number(e.target.value))}
           >
             {reciters?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
