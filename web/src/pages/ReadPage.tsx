@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MushafPage } from '../quran/MushafPage';
 import { useSaveBookmark } from '../reading/useBookmark';
 import { FontSizeControl } from '../components/FontSizeControl';
+import { JumpPicker } from '../quran/JumpPicker';
 import { AudioProvider } from '../audio/AudioContext';
 import { AudioBar } from '../audio/AudioBar';
 import { usePageData } from '../quran/usePageData';
@@ -36,8 +37,9 @@ function ReadPageInner({ n }: { n: number }) {
             <div className="text-[11px] text-muted mt-0.5">of 604</div>
           </div>
           <button onClick={() => navigate(`/read/page/${n + 1}`)} disabled={n >= 604} className={navBtn} aria-label="Next page">›</button>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:block">
-            <FontSizeControl />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+            <JumpPicker />
+            <span className="hidden sm:block"><FontSizeControl /></span>
           </div>
         </div>
       </header>
