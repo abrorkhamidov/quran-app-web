@@ -20,27 +20,27 @@ export class SessionsService {
     const first = ayahs[0];
     const last = ayahs[ayahs.length - 1];
 
-    await this.prisma.readingSession.create({
-      data: {
-        userId,
-        date: dto.date,
-        durationSeconds: dto.durationSeconds,
-        versesCount,
-        pagesCount,
-        hasanat,
-        startSurah: first?.surah ?? 0,
-        startAyah: first?.ayah ?? 0,
-        endSurah: last?.surah ?? 0,
-        endAyah: last?.ayah ?? 0,
-      },
-    });
-
-    if (pages.length) {
-      await this.prisma.pageRead.createMany({
-        data: pages.map((page) => ({ userId, page })),
-        skipDuplicates: true,
-      });
-    }
+    // session record and read-page coverage must persist together — otherwise a
+    // failed pageRead write would silently and permanently under-count coverage
+    await this.prisma.$transaction([
+      this.prisma.readingSession.create({
+        data: {
+          userId,
+          date: dto.date,
+          durationSeconds: dto.durationSeconds,
+          versesCount,
+          pagesCount,
+          hasanat,
+          startSurah: first?.surah ?? 0,
+          startAyah: first?.ayah ?? 0,
+          endSurah: last?.surah ?? 0,
+          endAyah: last?.ayah ?? 0,
+        },
+      }),
+      ...(pages.length
+        ? [this.prisma.pageRead.createMany({ data: pages.map((page) => ({ userId, page })), skipDuplicates: true })]
+        : []),
+    ]);
 
     const dp = await this.prisma.dailyProgress.upsert({
       where: { userId_date: { userId, date: dto.date } },

@@ -12,5 +12,7 @@ export function useCoverage() {
   return useQuery({
     queryKey: ['coverage'],
     queryFn: async (): Promise<Coverage> => (await api.get('/quran/coverage')).data,
+    // only changes after a reading flush, which invalidates this key explicitly
+    staleTime: 60_000,
   });
 }
