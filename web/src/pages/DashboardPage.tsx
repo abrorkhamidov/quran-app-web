@@ -5,6 +5,7 @@ import { useWeek } from '../dashboard/useWeek';
 import { useBookmark } from '../reading/useBookmark';
 import { FlameIcon } from '../layout/icons';
 import { formatDuration } from '../lib/formatDuration';
+import { KhatmBar } from '../dashboard/KhatmBar';
 import { useSurahs, useJuzList } from '../quran/useQuranMeta';
 import { ayahsLeftInJuz, juzOf } from '../quran/quranIndex';
 
@@ -119,6 +120,10 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+        </section>
+        {/* Qur'an completion */}
+        <section className="lg:col-span-12 rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+          <KhatmBar />
         </section>
       </div>
     </div>

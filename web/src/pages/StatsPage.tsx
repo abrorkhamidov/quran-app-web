@@ -4,6 +4,7 @@ import { isoAddDays } from '../stats/dateUtils';
 import { Heatmap } from '../stats/Heatmap';
 import { MinutesChart } from '../stats/MinutesChart';
 import { formatDuration } from '../lib/formatDuration';
+import { KhatmBar } from '../dashboard/KhatmBar';
 
 export default function StatsPage() {
   const today = localDate();
@@ -52,6 +53,10 @@ export default function StatsPage() {
           </div>
         </div>
       </div>
+
+      <section className="mt-5 rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+        <KhatmBar />
+      </section>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
