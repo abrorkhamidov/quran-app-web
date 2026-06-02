@@ -53,8 +53,9 @@ export class SessionsService {
       },
     });
 
-    const goalTargetSeconds = await this.settings.getGoalSeconds(userId);
-    const goalMet = dp.secondsRead >= goalTargetSeconds;
+    const goal = await this.settings.getGoal(userId);
+    const goalCurrent = goal.type === 'ayahs' ? dp.versesRead : dp.secondsRead;
+    const goalMet = goalCurrent >= goal.target;
     let streakState: StreakState =
       (await this.prisma.streak.findUnique({ where: { userId } })) ?? { currentStreak: 0, longestStreak: 0, lastActiveDate: null };
 
@@ -77,7 +78,7 @@ export class SessionsService {
         goalMet,
       },
       streak: { current: streakState.currentStreak, longest: streakState.longestStreak },
-      goalTargetSeconds,
+      goal,
     };
   }
 }

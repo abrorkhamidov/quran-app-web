@@ -14,10 +14,10 @@ export class StatsService {
       _sum: { secondsRead: true, versesRead: true, pagesRead: true, hasanat: true },
     });
     const streak = (await this.prisma.streak.findUnique({ where: { userId } })) ?? { currentStreak: 0, longestStreak: 0, lastActiveDate: null };
-    const goalTargetSeconds = await this.settings.getGoalSeconds(userId);
+    const goal = await this.settings.getGoal(userId);
 
     return {
-      goalTargetSeconds,
+      goal,
       today: {
         secondsRead: today?.secondsRead ?? 0,
         versesRead: today?.versesRead ?? 0,

@@ -4,16 +4,24 @@ import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 export const GOAL_LEVELS: Record<string, number> = { egg: 120, steady: 600, beast: 1800 };
 export const DEFAULT_GOAL_SECONDS = GOAL_LEVELS.egg;
+export const DEFAULT_GOAL_AYAHS = 10;
 
 @Injectable()
 export class SettingsService {
   constructor(private prisma: PrismaService) {}
 
-  private publicShape(s: { onboarded: boolean; goalLevel: string; goalTargetSeconds: number; preferredReciterId: number; theme: string; fontScale: number; readingStyle: string }) {
+  private publicShape(s: {
+    onboarded: boolean; goalLevel: string; goalTargetSeconds: number; goalType: string; goalTargetAyahs: number;
+    focusType: string; focusId: number | null; preferredReciterId: number; theme: string; fontScale: number; readingStyle: string;
+  }) {
     return {
       onboarded: s.onboarded,
       goalLevel: s.goalLevel,
       goalTargetSeconds: s.goalTargetSeconds,
+      goalType: s.goalType,
+      goalTargetAyahs: s.goalTargetAyahs,
+      focusType: s.focusType,
+      focusId: s.focusId,
       preferredReciterId: s.preferredReciterId,
       theme: s.theme,
       fontScale: s.fontScale,
@@ -26,9 +34,11 @@ export class SettingsService {
     return this.publicShape(row);
   }
 
-  async getGoalSeconds(userId: string): Promise<number> {
+  async getGoal(userId: string): Promise<{ type: 'time' | 'ayahs'; target: number }> {
     const row = await this.prisma.userSettings.findUnique({ where: { userId } });
-    return row?.goalTargetSeconds ?? DEFAULT_GOAL_SECONDS;
+    const type = row?.goalType === 'ayahs' ? 'ayahs' : 'time';
+    const target = type === 'ayahs' ? (row?.goalTargetAyahs ?? DEFAULT_GOAL_AYAHS) : (row?.goalTargetSeconds ?? DEFAULT_GOAL_SECONDS);
+    return { type, target };
   }
 
   async update(userId: string, dto: UpdateSettingsDto) {
