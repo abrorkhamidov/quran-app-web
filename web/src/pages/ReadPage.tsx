@@ -4,6 +4,8 @@ import { MushafPage } from '../quran/MushafPage';
 import { useSaveBookmark } from '../reading/useBookmark';
 import { FontSizeControl } from '../components/FontSizeControl';
 import { JumpPicker } from '../quran/JumpPicker';
+import { useSurahs, useJuzList } from '../quran/useQuranMeta';
+import { ayahsLeftInJuz, juzOf } from '../quran/quranIndex';
 import { AudioProvider } from '../audio/AudioContext';
 import { AudioBar } from '../audio/AudioBar';
 import { usePageData } from '../quran/usePageData';
@@ -15,6 +17,12 @@ function ReadPageInner({ n }: { n: number }) {
   const saveBookmark = useSaveBookmark();
   const { data } = usePageData(n);
   const [firstSurahAyah, setFirstSurahAyah] = useState<{ surah: number; ayah: number } | null>(null);
+  const { data: surahs } = useSurahs();
+  const { data: juz } = useJuzList();
+  const juzInfo =
+    surahs && juz && firstSurahAyah
+      ? { n: juzOf(surahs, juz, firstSurahAyah.surah, firstSurahAyah.ayah), left: ayahsLeftInJuz(surahs, juz, firstSurahAyah.surah, firstSurahAyah.ayah) }
+      : undefined;
 
   useReadingTracker(n);
 
@@ -34,7 +42,9 @@ function ReadPageInner({ n }: { n: number }) {
           <button onClick={() => navigate(`/read/page/${n - 1}`)} disabled={n <= 1} className={navBtn} aria-label="Previous page">‹</button>
           <div className="text-center leading-none">
             <div className="font-display text-lg">Page {n}</div>
-            <div className="text-[11px] text-muted mt-0.5">of 604</div>
+            <div className="text-[11px] text-muted mt-0.5">
+              {juzInfo ? `${juzInfo.left} left in Juz ${juzInfo.n}` : 'of 604'}
+            </div>
           </div>
           <button onClick={() => navigate(`/read/page/${n + 1}`)} disabled={n >= 604} className={navBtn} aria-label="Next page">›</button>
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
