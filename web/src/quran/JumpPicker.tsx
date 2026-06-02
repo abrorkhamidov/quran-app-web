@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurahs, useJuzList } from './useQuranMeta';
 import { pageForSurah, pageForJuz } from './quranIndex';
@@ -8,13 +8,30 @@ export function JumpPicker() {
   const { data: surahs } = useSurahs();
   const { data: juz } = useJuzList();
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
 
   const selectCls =
     'w-full rounded-xl border border-line-light dark:border-line-dark bg-surface-light dark:bg-surface-dark text-ink dark:text-ink-dark px-3 py-2 text-sm focus:outline-none';
   const opt = 'bg-card-light dark:bg-card-dark text-ink dark:text-ink-dark';
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
         className="rounded-full border border-line-light dark:border-line-dark px-3 py-1.5 text-sm text-muted hover:text-ink dark:hover:text-ink-dark transition"

@@ -7,8 +7,8 @@ type Tab = 'surah' | 'juz';
 
 export default function BrowsePage() {
   const navigate = useNavigate();
-  const { data: surahs } = useSurahs();
-  const { data: juz } = useJuzList();
+  const { data: surahs, isLoading: surahsLoading } = useSurahs();
+  const { data: juz, isLoading: juzLoading } = useJuzList();
   const [tab, setTab] = useState<Tab>('surah');
 
   const tabBtn = (key: Tab, label: string) => (
@@ -39,6 +39,7 @@ export default function BrowsePage() {
 
       {tab === 'surah' && (
         <div className="space-y-2">
+          {surahsLoading && <p className="text-muted">Loading…</p>}
           {surahs?.map((s) => (
             <button key={s.id} onClick={() => navigate(`/read/page/${pageForSurah(surahs, s.id)}`)} className={row}>
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent/10 text-sm text-accent-soft">{s.id}</span>
@@ -54,6 +55,7 @@ export default function BrowsePage() {
 
       {tab === 'juz' && (
         <div className="space-y-2">
+          {juzLoading && <p className="text-muted">Loading…</p>}
           {juz?.map((j) => (
             <button key={j.juz} onClick={() => navigate(`/read/page/${pageForJuz(juz, j.juz)}`)} className={row}>
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent/10 text-sm text-accent-soft">{j.juz}</span>

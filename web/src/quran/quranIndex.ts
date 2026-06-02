@@ -15,7 +15,7 @@ export type Juz = {
   ayahCount: number;
 };
 
-/** 1-based cumulative ayah index across the whole Qur'an. */
+/** 1-based cumulative ayah index across the whole Qur'an. Assumes `surahs` is sorted ascending by id (as produced by deriveSurahs). */
 export function globalAyahIndex(surahs: Surah[], surah: number, ayah: number): number {
   let idx = 0;
   for (const s of surahs) {
