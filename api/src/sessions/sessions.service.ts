@@ -14,7 +14,7 @@ export class SessionsService {
       where: { page: { in: pages } },
       orderBy: [{ surah: 'asc' }, { ayah: 'asc' }],
     });
-    const hasanat = ayahs.reduce((sum, a) => sum + a.letterCount * 10, 0);
+    const hasanat = ayahs.reduce((sum, a) => sum + a.letterCount, 0);
     const versesCount = ayahs.length;
     const pagesCount = pages.length;
     const first = ayahs[0];
