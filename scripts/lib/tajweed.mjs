@@ -1,30 +1,40 @@
-// Parse the alquran.cloud "quran-tajweed" bracket format into ordered segments.
-// Format: plain text with inline `[<rule>[<arabic>]` markers, e.g.
-//   "بِسْمِ [h:1[ٱ]للَّهِ [n[ـٰ]نِ ..."
-// The rule is the leading letters before an optional ":id". Text outside
-// brackets is plain (rule = null).
-//
-// Rule letters → tajweed category:
-//   n natural madd · p permissible madd · o obligatory madd · m necessary madd
-//   g ghunnah · a idgham-with-ghunnah · u idgham-without-ghunnah
-//   f ikhfa · i iqlab · q qalqalah
-//   h hamzat-wasl · s silent · l laam-shamsiyah
+// Parse quran.com `text_uthmani_tajweed` per-word HTML into ordered segments.
+// Markup is plain text interspersed with possibly-NESTED `<rule class=NAME>…</rule>`.
+// Some classes are colour rules (below); `custom-*` classes are glyph hints, not
+// colours. A text run's colour is the nearest ANCESTOR that is a real tajweed rule.
+//   "ذ<rule class=madda_normal><rule class=custom-alef-maksora>ٰ</rule></rule>لِكَ"
+//   → [["ذ", null], ["ٰ", "madda_normal"], ["لِكَ", null]]
 
-const TOKEN = /\[([a-z]+)(?::\d+)?\[([^\]]*)\]/g;
+export const TAJWEED_RULES = new Set([
+  'ham_wasl', 'laam_shamsiyah', 'slnt',
+  'madda_normal', 'madda_permissible', 'madda_necessary',
+  'madda_obligatory_mottasel', 'madda_obligatory_monfasel',
+  'ghunnah', 'idgham_ghunnah', 'idgham_wo_ghunnah', 'idgham_shafawi', 'idgham_mutajanisayn',
+  'ikhafa', 'ikhafa_shafawi', 'iqlab', 'qalaqah',
+]);
 
-/** @returns {[string, (string|null)][]} ordered [text, ruleLetterOrNull] segments */
-export function parseTajweed(text) {
+const TOKEN = /<rule class=([a-z_-]+)>|<\/rule>|([^<]+)/g;
+
+/** @returns {[string, (string|null)][]} */
+export function parseWordTajweed(html) {
+  if (!html) return [];
   const out = [];
-  let last = 0;
+  const stack = [];
   let m;
   TOKEN.lastIndex = 0;
-  while ((m = TOKEN.exec(text)) !== null) {
-    if (m.index > last) out.push([text.slice(last, m.index), null]);
-    out.push([m[2], m[1]]);
-    last = m.index + m[0].length;
+  while ((m = TOKEN.exec(html)) !== null) {
+    if (m[1] !== undefined) {
+      stack.push(m[1]);
+    } else if (m[2] !== undefined) {
+      let rule = null;
+      for (let i = stack.length - 1; i >= 0; i--) {
+        if (TAJWEED_RULES.has(stack[i])) { rule = stack[i]; break; }
+      }
+      out.push([m[2], rule]);
+    } else {
+      stack.pop();
+    }
   }
-  if (last < text.length) out.push([text.slice(last), null]);
-  // merge adjacent same-rule segments to keep it compact
   const merged = [];
   for (const [t, r] of out) {
     const prev = merged[merged.length - 1];
