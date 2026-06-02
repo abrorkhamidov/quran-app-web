@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { stripHtml, buildAyahList } from '../lib/build-ayahs.mjs';
 
 describe('stripHtml', () => {
-  it('removes tags (e.g. Saheeh footnote markers) and collapses whitespace', () => {
-    expect(stripHtml('This is the Book<sup foot_note=1>1</sup> about which')).toBe('This is the Book1 about which');
+  it('drops footnote markers entirely, strips other tags, and collapses whitespace', () => {
+    expect(stripHtml('This is the Book<sup foot_note=1>1</sup> about which')).toBe('This is the Book about which');
+    expect(stripHtml('In the name of Allāh,<sup foot_note=1>1</sup> the Merciful')).toBe('In the name of Allāh, the Merciful');
     expect(stripHtml('  spaced   out\n text ')).toBe('spaced out text');
   });
 });
@@ -20,7 +21,7 @@ describe('buildAyahList', () => {
     ];
     expect(buildAyahList(2, uthmani, translations)).toEqual([
       { surah: 2, ayah: 1, text: 'الٓمٓ', translation: 'Alif, Lam, Meem.' },
-      { surah: 2, ayah: 2, text: 'ذَٰلِكَ ٱلْكِتَٰبُ', translation: 'This is the Book1 about which' },
+      { surah: 2, ayah: 2, text: 'ذَٰلِكَ ٱلْكِتَٰبُ', translation: 'This is the Book about which' },
     ]);
   });
 

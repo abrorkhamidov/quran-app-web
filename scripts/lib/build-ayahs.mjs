@@ -1,5 +1,9 @@
 export function stripHtml(s) {
-  return String(s).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return String(s)
+    .replace(/<sup[^>]*>.*?<\/sup>/gi, '') // drop footnote markers entirely (e.g. "Allāh,1" -> "Allāh,")
+    .replace(/<[^>]*>/g, '') // strip any remaining tags
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export function buildAyahList(surah, uthmaniVerses, translations) {
