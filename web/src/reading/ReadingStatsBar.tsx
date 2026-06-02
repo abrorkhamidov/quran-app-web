@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useStatsSummary } from './useStatsSummary';
-
-function fmt(s: number) {
-  const m = Math.floor(s / 60);
-  return `${m}:${String(s % 60).padStart(2, '0')}`;
-}
+import { formatDuration } from '../lib/formatDuration';
 
 export function ReadingStatsBar() {
   const { data } = useStatsSummary();
@@ -21,7 +17,7 @@ export function ReadingStatsBar() {
   const cells = [
     { label: 'Hasanat', value: (today?.hasanat ?? 0).toLocaleString(), accent: true },
     { label: 'Verses', value: String(today?.versesRead ?? 0), accent: false },
-    { label: 'Time', value: fmt(seconds), accent: false },
+    { label: 'Time', value: formatDuration(seconds), accent: false },
     { label: 'Pages', value: String(today?.pagesRead ?? 0), accent: false },
   ];
   return (

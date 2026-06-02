@@ -3,8 +3,7 @@ import { useCalendar } from '../stats/useCalendar';
 import { isoAddDays } from '../stats/dateUtils';
 import { Heatmap } from '../stats/Heatmap';
 import { MinutesChart } from '../stats/MinutesChart';
-
-function fmtTime(s: number) { const h = Math.floor(s / 3600); const m = Math.floor((s % 3600) / 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
+import { formatDuration } from '../lib/formatDuration';
 
 export default function StatsPage() {
   const today = localDate();
@@ -18,7 +17,7 @@ export default function StatsPage() {
     { label: 'Total Hasanat', value: (life?.hasanat ?? 0).toLocaleString(), accent: true },
     { label: 'Verses', value: (life?.verses ?? 0).toLocaleString(), accent: false },
     { label: 'Pages', value: (life?.pages ?? 0).toLocaleString(), accent: false },
-    { label: 'Time', value: fmtTime(life?.seconds ?? 0), accent: false },
+    { label: 'Time', value: formatDuration(life?.seconds ?? 0), accent: false },
   ];
 
   return (

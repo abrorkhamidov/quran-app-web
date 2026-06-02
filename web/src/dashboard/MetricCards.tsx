@@ -1,13 +1,12 @@
 import type { StatsSummary } from '../reading/useStatsSummary';
-
-function fmt(s: number) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+import { formatDuration } from '../lib/formatDuration';
 
 export function MetricCards({ summary }: { summary?: StatsSummary }) {
   const t = summary?.today;
   const cards = [
     { label: 'Hasanat', value: (t?.hasanat ?? 0).toLocaleString(), accent: true },
     { label: 'Verses', value: String(t?.versesRead ?? 0) },
-    { label: 'Time', value: fmt(t?.secondsRead ?? 0) },
+    { label: 'Time', value: formatDuration(t?.secondsRead ?? 0) },
     { label: 'Pages', value: String(t?.pagesRead ?? 0) },
   ];
   return (

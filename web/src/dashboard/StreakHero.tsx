@@ -1,6 +1,5 @@
 import type { StatsSummary } from '../reading/useStatsSummary';
-
-function fmt(s: number) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+import { formatDuration } from '../lib/formatDuration';
 
 export function StreakHero({ summary }: { summary?: StatsSummary }) {
   const streak = summary?.streak.current ?? 0;
@@ -13,7 +12,7 @@ export function StreakHero({ summary }: { summary?: StatsSummary }) {
       <div className="text-muted text-sm">{streak === 1 ? 'day streak' : 'day streak'}</div>
       <div className="mt-4 text-xs text-muted flex justify-between">
         <span>Today's goal</span>
-        <span>{fmt(secs)} / {fmt(goal)}</span>
+        <span>{formatDuration(secs)} / {formatDuration(goal)}</span>
       </div>
       <div className="h-2 rounded-full bg-surface-light dark:bg-surface-dark mt-1 overflow-hidden">
         <div className="h-2 rounded-full bg-accent-soft transition-all" style={{ width: `${pct}%` }} />
