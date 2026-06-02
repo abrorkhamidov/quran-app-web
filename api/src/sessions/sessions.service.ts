@@ -35,6 +35,13 @@ export class SessionsService {
       },
     });
 
+    if (pages.length) {
+      await this.prisma.pageRead.createMany({
+        data: pages.map((page) => ({ userId, page })),
+        skipDuplicates: true,
+      });
+    }
+
     const dp = await this.prisma.dailyProgress.upsert({
       where: { userId_date: { userId, date: dto.date } },
       create: { userId, date: dto.date, secondsRead: dto.durationSeconds, versesRead: versesCount, pagesRead: pagesCount, hasanat },
