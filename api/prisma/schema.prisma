@@ -95,6 +95,10 @@ model UserSettings {
   onboarded         Boolean  @default(false)
   goalLevel         String   @default("egg")   // egg | steady | beast
   goalTargetSeconds Int      @default(120)
+  goalType          String   @default("time")  // time | ayahs
+  goalTargetAyahs   Int      @default(10)
+  focusType         String   @default("none")  // none | juz | surah
+  focusId           Int?
   preferredReciterId Int     @default(7)
   theme             String   @default("light") // light | dark
   fontScale         Float    @default(1)
