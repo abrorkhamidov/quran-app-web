@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurahs, useJuzList } from '../quran/useQuranMeta';
 import { pageForSurah, pageForJuz } from '../quran/quranIndex';
+import { useCoverage } from '../quran/useCoverage';
+import { ProgressRing } from '../quran/ProgressRing';
 
 type Tab = 'surah' | 'juz';
 
@@ -9,6 +11,9 @@ export default function BrowsePage() {
   const navigate = useNavigate();
   const { data: surahs, isLoading: surahsLoading } = useSurahs();
   const { data: juz, isLoading: juzLoading } = useJuzList();
+  const { data: coverage } = useCoverage();
+  const surahPct = new Map((coverage?.surah ?? []).map((d) => [d.id, d.percent]));
+  const juzPct = new Map((coverage?.juz ?? []).map((d) => [d.id, d.percent]));
   const [tab, setTab] = useState<Tab>('surah');
 
   const tabBtn = (key: Tab, label: string) => (
@@ -48,6 +53,7 @@ export default function BrowsePage() {
                 <span className="block text-xs text-muted">{s.ayahCount} ayahs · {s.revelation === 'meccan' ? 'Meccan' : 'Medinan'}</span>
               </span>
               <span className="font-quran text-xl">{s.arabicName}</span>
+              <ProgressRing percent={surahPct.get(s.id) ?? 0} />
             </button>
           ))}
         </div>
@@ -64,6 +70,7 @@ export default function BrowsePage() {
                 <span className="block text-xs text-muted">starts {j.startSurah}:{j.startAyah} · {j.ayahCount} ayahs</span>
               </span>
               <span className="text-xs text-muted">p.{j.startPage}</span>
+              <ProgressRing percent={juzPct.get(j.juz) ?? 0} />
             </button>
           ))}
         </div>
