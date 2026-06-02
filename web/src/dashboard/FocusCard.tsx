@@ -25,7 +25,7 @@ export function FocusCard() {
         <span className="text-sm text-muted">{percent}% · {left} ayah{left === 1 ? '' : 's'} left</span>
       </div>
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-light dark:bg-surface-dark">
-        <div className="h-full rounded-full bg-accent-soft transition-all duration-500" style={{ width: `${percent}%` }} />
+        <div className="h-full rounded-full bg-accent-soft transition-all duration-500" style={{ width: `${Math.min(100, percent)}%` }} />
       </div>
     </section>
   );

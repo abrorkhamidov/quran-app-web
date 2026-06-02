@@ -44,6 +44,7 @@ export class SettingsService {
   async update(userId: string, dto: UpdateSettingsDto) {
     const data: Record<string, unknown> = { ...dto };
     if (dto.goalLevel) data.goalTargetSeconds = GOAL_LEVELS[dto.goalLevel];
+    if (dto.focusType === 'none') data.focusId = null; // clearing focus drops the stale id
     const row = await this.prisma.userSettings.upsert({
       where: { userId },
       create: { userId, ...data },

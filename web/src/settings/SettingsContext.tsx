@@ -79,7 +79,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       if (data.readingStyle) setReadingStyleState(data.readingStyle);
       if (data.goalType) setGoalTypeState(data.goalType);
       if (typeof data.goalTargetAyahs === 'number') setGoalTargetAyahsState(data.goalTargetAyahs);
-      if (data.focusType) setFocusTypeState(data.focusType);
+      if (data.focusType != null) setFocusTypeState(data.focusType);
       setFocusIdState(data.focusId ?? null);
       setOnboardedState(data.onboarded);
       hydrated.current = true;
