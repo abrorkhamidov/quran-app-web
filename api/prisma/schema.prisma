@@ -44,6 +44,15 @@ model Favorite {
   @@index([userId])
 }
 
+model PageRead {
+  userId      String
+  page        Int      // 1..604
+  firstReadAt DateTime @default(now())
+
+  @@id([userId, page])
+  @@index([userId])
+}
+
 model ReadingSession {
   id              String   @id @default(uuid())
   userId          String
