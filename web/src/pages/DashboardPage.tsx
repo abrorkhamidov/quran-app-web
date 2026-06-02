@@ -4,16 +4,27 @@ import { useStatsSummary } from '../reading/useStatsSummary';
 import { useWeek } from '../dashboard/useWeek';
 import { useBookmark } from '../reading/useBookmark';
 import { FlameIcon } from '../layout/icons';
+import { formatDuration } from '../lib/formatDuration';
+import { useSurahs, useJuzList } from '../quran/useQuranMeta';
+import { ayahsLeftInJuz, juzOf } from '../quran/quranIndex';
 
 const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const dowLetter = (date: string) => DOW[new Date(`${date}T00:00:00Z`).getUTCDay()];
-const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const { data: summary } = useStatsSummary();
   const { data: week } = useWeek();
   const { data: bookmark } = useBookmark();
+  const { data: surahs } = useSurahs();
+  const { data: juz } = useJuzList();
+  const resumeSurah = bookmark?.surah;
+  const resumeAyah = bookmark?.ayah;
+  const surahName = surahs && resumeSurah ? surahs.find((s) => s.id === resumeSurah)?.name : undefined;
+  const juzInfo =
+    surahs && juz && resumeSurah && resumeAyah
+      ? { n: juzOf(surahs, juz, resumeSurah, resumeAyah), left: ayahsLeftInJuz(surahs, juz, resumeSurah, resumeAyah) }
+      : undefined;
 
   const t = summary?.today;
   const goal = summary?.goalTargetSeconds ?? 120;
@@ -25,7 +36,7 @@ export default function DashboardPage() {
   const metrics = [
     { label: 'Hasanat', value: (t?.hasanat ?? 0).toLocaleString(), accent: true },
     { label: 'Verses', value: String(t?.versesRead ?? 0), accent: false },
-    { label: 'Time', value: fmt(secs), accent: false },
+    { label: 'Time', value: formatDuration(secs), accent: false },
     { label: 'Pages', value: String(t?.pagesRead ?? 0), accent: false },
   ];
 
@@ -48,18 +59,25 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="mt-5 flex items-end gap-3">
-            <span className="font-display text-5xl leading-none">{fmt(secs)}</span>
-            <span className="text-muted mb-1">/ {fmt(goal)}</span>
+            <span className="font-display text-5xl leading-none">{formatDuration(secs)}</span>
+            <span className="text-muted mb-1">/ {formatDuration(goal)}</span>
             {t?.goalMet && <span className="mb-1 text-sm text-accent-soft">complete ✓</span>}
           </div>
           <div className="mt-4 h-2 rounded-full bg-surface-light dark:bg-surface-dark overflow-hidden">
             <div className="h-full rounded-full bg-accent-soft transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
+          {juzInfo && (
+            <p className="mt-3 text-sm text-muted">
+              {juzInfo.left} ayah{juzInfo.left === 1 ? '' : 's'} left to finish Juz {juzInfo.n}
+            </p>
+          )}
           <Link
             to={`/read/page/${resume}`}
             className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-accent text-white py-4 font-medium hover:opacity-95 transition"
           >
-            {bookmark ? `Continue · page ${resume}` : 'Start reading'}
+            {bookmark
+              ? `Continue · ${surahName ?? `page ${resume}`}${surahName ? ` ${resumeSurah}:${resumeAyah}` : ''}`
+              : 'Start reading'}
             <span aria-hidden>→</span>
           </Link>
         </section>
@@ -78,7 +96,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Week */}
-        <section className="lg:col-span-7 rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
+        <section className="lg:col-span-12 rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
           <div className="flex items-center justify-between mb-6">
             <span className="text-xs uppercase tracking-[0.14em] text-muted">This week</span>
             <Link to="/stats" className="text-sm text-accent-soft hover:underline">All stats →</Link>
@@ -87,7 +105,7 @@ export default function DashboardPage() {
             {week?.map((d, i) => (
               <div
                 key={d.date}
-                title={`${d.date}: ${Math.round(d.secondsRead / 60)} min`}
+                title={`${d.date}: ${formatDuration(d.secondsRead)}`}
                 className={[
                   'h-11 w-11 rounded-2xl grid place-items-center text-sm transition-colors',
                   d.goalMet
@@ -100,18 +118,6 @@ export default function DashboardPage() {
                 {dowLetter(d.date)}
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Reminder / quick links */}
-        <section className="lg:col-span-5 rounded-3xl border border-line-light dark:border-line-dark bg-accent/[0.04] p-7 flex flex-col justify-center">
-          <p className="font-display text-xl leading-snug italic text-ink/90 dark:text-ink-dark/90">
-            “The most beloved deeds to Allah are those done consistently, even if they are few.”
-          </p>
-          <div className="mt-6 flex gap-5 text-sm">
-            <Link to="/favorites" className="text-accent-soft hover:underline">Favorites</Link>
-            <Link to="/stats" className="text-accent-soft hover:underline">Stats</Link>
-            <Link to="/settings" className="text-accent-soft hover:underline">Settings</Link>
           </div>
         </section>
       </div>
