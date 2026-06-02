@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { usePageData } from './usePageData';
 import { useTajweedPage } from './useTajweedPage';
 import { ensureQcf2Css, pageFontFamily } from './pageFont';
@@ -38,29 +38,69 @@ export function MushafPage({ page }: { page: number }) {
     );
   }, [data]);
 
+  // shrink the whole page uniformly so the widest line fits the column at any
+  // width — mirrors how a printed Mushaf justifies a fixed page to the paper.
+  const linesRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef(1);
+  const [zoom, setZoom] = useState(1);
+  useLayoutEffect(() => {
+    const el = linesRef.current;
+    const parent = el?.parentElement;
+    if (!el || !parent) return;
+    let raf = 0;
+    const fit = () => {
+      const cur = zoomRef.current || 1;
+      const natural = el.getBoundingClientRect().width / cur; // un-zoomed widest-line width
+      const avail = parent.getBoundingClientRect().width; // column width (not zoomed)
+      if (!natural || !avail) return;
+      const z = natural > avail ? Math.min(1, avail / natural) : 1;
+      if (Math.abs(z - zoomRef.current) > 0.005) { zoomRef.current = z; setZoom(z); }
+    };
+    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
+    schedule();
+    const ro = new ResizeObserver(schedule);
+    ro.observe(parent);
+    window.addEventListener('resize', schedule);
+    let cancelled = false;
+    document.fonts?.ready?.then(() => { if (!cancelled) schedule(); });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener('resize', schedule);
+    };
+  }, [data, fontScale, tajweed, page]);
+
   if (isLoading) return <div className="p-8 text-muted">Loading page {page}…</div>;
   if (isError || !data) return <div className="p-8 text-red-500">Could not load page {page}.</div>;
 
   return (
     <>
-      <div
-        className={`mx-auto max-w-2xl px-4 py-6 text-ink dark:text-ink-dark ${tajweed ? 'font-quran' : ''}`}
-        style={{
-          fontFamily: tajweed ? undefined : pageFontFamily(page),
-          fontSize: `${(tajweed ? 30 : 28) * fontScale}px`,
-          lineHeight: tajweed ? 2.45 : undefined,
-        }}
-      >
-        {data.lines.map((line, li) => (
-          <MushafLine
-            key={line.line}
-            line={line}
-            positions={positionsByLine[li]}
-            selected={selected}
-            highlighted={highlighted}
-            onSelect={setSelected}
-          />
-        ))}
+      <div className="px-4 py-6">
+        <div className="mx-auto max-w-2xl flex justify-center overflow-hidden">
+          <div
+            ref={linesRef}
+            className={`text-ink dark:text-ink-dark ${tajweed ? 'font-quran' : ''}`}
+            style={{
+              width: 'max-content',
+              fontFamily: tajweed ? undefined : pageFontFamily(page),
+              fontSize: `${(tajweed ? 30 : 28) * fontScale}px`,
+              lineHeight: tajweed ? 2.45 : undefined,
+              zoom,
+            }}
+          >
+            {data.lines.map((line, li) => (
+              <MushafLine
+                key={line.line}
+                line={line}
+                positions={positionsByLine[li]}
+                selected={selected}
+                highlighted={highlighted}
+                onSelect={setSelected}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {tajweed && (
