@@ -29,13 +29,13 @@ type SettingsValue = {
 export const SettingsContext = createContext<SettingsValue | null>(null);
 
 const MIN_SCALE = 0.8;
-const MAX_SCALE = 1.8;
+const MAX_SCALE = 1.3; // past ~130% the page auto-fit zoom cancels out larger text, so cap here
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [theme, setThemeState] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'light');
-  const [fontScale, setFontScaleState] = useState<number>(() => Number(localStorage.getItem('fontScale')) || 1);
+  const [fontScale, setFontScaleState] = useState<number>(() => Math.min(MAX_SCALE, Math.max(MIN_SCALE, Number(localStorage.getItem('fontScale')) || 1)));
   const [reciterId, setReciterIdState] = useState<number>(() => Number(localStorage.getItem('reciterId')) || 7);
   const [playbackSpeed, setPlaybackSpeedState] = useState<number>(() => Number(localStorage.getItem('playbackSpeed')) || 1);
   const [goalLevel, setGoalLevelState] = useState<GoalLevel>('egg');
