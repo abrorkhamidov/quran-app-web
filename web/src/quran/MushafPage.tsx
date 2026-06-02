@@ -1,17 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePageData } from './usePageData';
+import { useTajweedPage } from './useTajweedPage';
 import { ensureQcf2Css, pageFontFamily } from './pageFont';
 import { MushafLine } from './MushafLine';
 import { FavoriteBar } from './FavoriteBar';
+import { TAJWEED_LEGEND } from './tajweedColors';
+import type { RenderWord } from './types';
 import { useSettings } from '../settings/useSettings';
 import { useAudio } from '../audio/useAudio';
 
+type RenderLine = { line: number; words: RenderWord[] };
+
 export function MushafPage({ page }: { page: number }) {
-  const { data, isLoading, isError } = usePageData(page);
-  const { fontScale } = useSettings();
+  const { fontScale, readingStyle } = useSettings();
+  const tajweed = readingStyle === 'tajweed';
+  const mushafQ = usePageData(page);
+  const tajweedQ = useTajweedPage(page, tajweed);
+  const active = tajweed ? tajweedQ : mushafQ;
+  const data = active.data as { page: number; lines: RenderLine[] } | undefined;
+  const { isLoading, isError } = active;
+
   const { highlighted } = useAudio();
   const [selected, setSelected] = useState<{ surah: number; ayah: number } | null>(null);
-  useEffect(() => { ensureQcf2Css(); }, []);
+  useEffect(() => { if (!tajweed) ensureQcf2Css(); }, [tajweed]);
   useEffect(() => { setSelected(null); }, [page]);
 
   // position per word, computed page-globally: count only 'word' type, per ayah, 1-based
@@ -33,8 +44,12 @@ export function MushafPage({ page }: { page: number }) {
   return (
     <>
       <div
-        className="mx-auto max-w-2xl px-4 py-6 text-ink dark:text-ink-dark"
-        style={{ fontFamily: pageFontFamily(page), fontSize: `${28 * fontScale}px` }}
+        className={`mx-auto max-w-2xl px-4 py-6 text-ink dark:text-ink-dark ${tajweed ? 'font-quran' : ''}`}
+        style={{
+          fontFamily: tajweed ? undefined : pageFontFamily(page),
+          fontSize: `${(tajweed ? 30 : 28) * fontScale}px`,
+          lineHeight: tajweed ? 2.45 : undefined,
+        }}
       >
         {data.lines.map((line, li) => (
           <MushafLine
@@ -47,6 +62,18 @@ export function MushafPage({ page }: { page: number }) {
           />
         ))}
       </div>
+
+      {tajweed && (
+        <div className="border-t border-line-light dark:border-line-dark px-6 sm:px-10 py-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+          {TAJWEED_LEGEND.map((l) => (
+            <span key={l.label} className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: l.color }} />
+              {l.label}
+            </span>
+          ))}
+        </div>
+      )}
+
       {selected && <FavoriteBar selected={selected} onClose={() => setSelected(null)} />}
     </>
   );

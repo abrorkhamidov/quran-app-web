@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import type { RenderWord } from './types';
 
-export type TajweedSegment = [text: string, rule: string | null];
-export type TajweedAyah = { surah: number; ayah: number; segments: TajweedSegment[] };
-export type TajweedPageData = { page: number; ayahs: TajweedAyah[] };
+export type TajweedLine = { line: number; words: RenderWord[] };
+export type TajweedPageData = { page: number; lines: TajweedLine[] };
 
 async function fetchTajweed(page: number): Promise<TajweedPageData> {
   const res = await fetch(`/quran/tajweed/${page}.json`);
@@ -10,10 +10,11 @@ async function fetchTajweed(page: number): Promise<TajweedPageData> {
   return res.json();
 }
 
-export function useTajweedPage(page: number) {
+export function useTajweedPage(page: number, enabled: boolean) {
   return useQuery({
     queryKey: ['tajweed-page', page],
     queryFn: () => fetchTajweed(page),
     staleTime: Infinity,
+    enabled,
   });
 }

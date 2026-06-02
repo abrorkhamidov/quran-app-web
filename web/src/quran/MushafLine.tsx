@@ -1,4 +1,4 @@
-import type { MushafLine as Line } from './types';
+import type { RenderWord } from './types';
 import type { HighlightedWord } from '../audio/types';
 import { MushafWord } from './MushafWord';
 
@@ -9,7 +9,7 @@ export function MushafLine({
   highlighted,
   onSelect,
 }: {
-  line: Line;
+  line: { line: number; words: RenderWord[] };
   positions: number[]; // position per word in this line, aligned by index
   selected: { surah: number; ayah: number } | null;
   highlighted: HighlightedWord | null;

@@ -1,4 +1,5 @@
-import type { MushafWord as Word } from './types';
+import type { RenderWord } from './types';
+import { RULE_COLOR } from './tajweedColors';
 
 export function MushafWord({
   word,
@@ -7,15 +8,18 @@ export function MushafWord({
   isPlaying,
   onSelect,
 }: {
-  word: Word;
+  word: RenderWord;
   position: number;
   selected: boolean;
   isPlaying: boolean;
   onSelect: (a: { surah: number; ayah: number }) => void;
 }) {
+  const tajweed = !!word.segments;
   const base = word.type === 'end' ? 'text-muted' : '';
-  const playing = isPlaying ? 'bg-accent text-white rounded' : '';
+  // playing highlight: solid for glyph; soft tint for tajweed so the colours stay legible
+  const playing = isPlaying ? (tajweed ? 'bg-accent-soft/30 rounded' : 'bg-accent text-white rounded') : '';
   const sel = selected && !isPlaying ? 'bg-accent-soft/25 rounded' : '';
+
   return (
     <span
       className={`${base} ${playing} ${sel} cursor-pointer`}
@@ -24,7 +28,15 @@ export function MushafWord({
       data-position={position}
       onClick={() => onSelect({ surah: word.surah, ayah: word.ayah })}
     >
-      {word.glyph}
+      {tajweed
+        ? word.type === 'end'
+          ? `﴿${word.segments!.map((s) => s[0]).join('')}﴾`
+          : word.segments!.map(([t, r], i) => (
+              <span key={i} style={r ? { color: RULE_COLOR[r] } : undefined}>
+                {t}
+              </span>
+            ))
+        : word.glyph}
     </span>
   );
 }
