@@ -24,6 +24,7 @@ export function useReadingTracker(page: number) {
     try {
       await api.post('/reading-sessions', { date: localDate(), durationSeconds: seconds, pages });
       qc.invalidateQueries({ queryKey: ['stats-summary'] });
+      qc.invalidateQueries({ queryKey: ['coverage'] });
     } catch {
       /* keep counting; next flush retries */
     }
