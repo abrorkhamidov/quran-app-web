@@ -6,5 +6,5 @@ export class UpdateSettingsDto {
   @IsOptional() @IsInt() preferredReciterId?: number;
   @IsOptional() @IsIn(['light', 'dark']) theme?: string;
   @IsOptional() @IsNumber() @Min(0.8) @Max(1.8) fontScale?: number;
-  @IsOptional() @IsIn(['mushaf', 'tajweed']) readingStyle?: string;
+  @IsOptional() @IsIn(['mushaf', 'tajweed', 'ayah']) readingStyle?: string;
 }

@@ -5,7 +5,7 @@ import { useAuth } from '../auth/useAuth';
 
 type Theme = 'light' | 'dark';
 export type GoalLevel = 'egg' | 'steady' | 'beast';
-export type ReadingStyle = 'mushaf' | 'tajweed';
+export type ReadingStyle = 'mushaf' | 'tajweed' | 'ayah';
 export const GOAL_SECONDS: Record<GoalLevel, number> = { egg: 120, steady: 600, beast: 1800 };
 
 type SettingsValue = {

@@ -19,9 +19,10 @@ export default function SettingsPage() {
     if (reciters?.length && validReciterId != null && validReciterId !== reciterId) setReciterId(validReciterId);
   }, [reciters, validReciterId, reciterId, setReciterId]);
 
-  const styles: { key: 'mushaf' | 'tajweed'; name: string; blurb: string }[] = [
+  const styles: { key: 'mushaf' | 'tajweed' | 'ayah'; name: string; blurb: string }[] = [
     { key: 'mushaf', name: 'Mushaf', blurb: 'Page-faithful QCF script' },
     { key: 'tajweed', name: 'Tajwīd', blurb: 'Colour-coded rules' },
+    { key: 'ayah', name: 'Translation', blurb: 'Ayah-by-ayah + English' },
   ];
 
   return (
@@ -58,7 +59,7 @@ export default function SettingsPage() {
 
         <section className="rounded-3xl bg-card-light dark:bg-card-dark border border-line-light dark:border-line-dark shadow-soft p-7">
           <div className="text-xs uppercase tracking-[0.14em] text-muted mb-4">Reading style</div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {styles.map((s) => {
               const selected = readingStyle === s.key;
               return (
