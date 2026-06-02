@@ -4,7 +4,7 @@ import { useAuth } from '../auth/useAuth';
 import { useSettings } from '../settings/useSettings';
 import { useStatsSummary } from '../reading/useStatsSummary';
 import { useBookmark } from '../reading/useBookmark';
-import { BookIcon, ChartIcon, FlameIcon, GearIcon, HeartIcon, HomeIcon } from './icons';
+import { BookIcon, ChartIcon, FlameIcon, GearIcon, HeartIcon, HomeIcon, ListIcon } from './icons';
 
 type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }>; prefix: string; end?: boolean };
 
@@ -41,6 +41,7 @@ export function AppShell() {
   const items: NavItem[] = [
     { to: '/', label: 'Home', icon: HomeIcon, prefix: '/', end: true },
     { to: `/read/page/${resume}`, label: 'Read', icon: BookIcon, prefix: '/read' },
+    { to: '/browse', label: 'Browse', icon: ListIcon, prefix: '/browse' },
     { to: '/stats', label: 'Stats', icon: ChartIcon, prefix: '/stats' },
     { to: '/favorites', label: 'Favorites', icon: HeartIcon, prefix: '/favorites' },
     { to: '/settings', label: 'Settings', icon: GearIcon, prefix: '/settings' },
@@ -102,7 +103,7 @@ export function AppShell() {
 
       {/* mobile bottom nav (hidden while reading for focus) */}
       {!onRead && (
-        <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 grid grid-cols-5 border-t border-line-light dark:border-line-dark bg-sidebar-light/95 dark:bg-sidebar-dark/95 backdrop-blur">
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 grid grid-cols-6 border-t border-line-light dark:border-line-dark bg-sidebar-light/95 dark:bg-sidebar-dark/95 backdrop-blur">
           {items.map((it) => {
             const Icon = it.icon;
             const active = isActive(it);

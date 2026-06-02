@@ -6,6 +6,7 @@ import { AppShell } from './layout/AppShell';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import BrowsePage from './pages/BrowsePage';
 import ReadPage from './pages/ReadPage';
 import FavoritesPage from './pages/FavoritesPage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -37,6 +38,7 @@ export default function App() {
             >
               <Route path="/" element={<DashboardPage />} />
               <Route path="/read/page/:page" element={<ReadPage />} />
+              <Route path="/browse" element={<BrowsePage />} />
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
